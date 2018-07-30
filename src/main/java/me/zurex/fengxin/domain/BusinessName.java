@@ -6,5 +6,6 @@ package me.zurex.fengxin.domain;
  * Make life more fun
  */
 public enum BusinessName {
-    CAPTCHA
+    CAPTCHA,
+    TOKEN
 }

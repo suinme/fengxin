@@ -1,8 +1,11 @@
 package me.zurex.fengxin.domain.forum;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javafx.geometry.Pos;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -10,30 +13,38 @@ import java.util.Date;
  * @date 2018/6/19
  * Make life more fun
  */
-@Document(collection = "post")
+@Table(name = "topic")
+@Entity
 public class PostModel {
     @Id
-    private String id;
+    @GeneratedValue
+    private long id;
     private String tid;
     private String title;
+    private String tag;
     private String author;
     private String uid;
     private String content;
     private String image;
     private String avatar;
-    private String createTime;
+    private long createTime;
     private int likeCount;
     private int replyCount;
+
+    public PostModel(){
+
+    }
 
     public PostModel(
             String tid,
             String title,
             String author,
             String uid,
+            String tag,
             String content,
             String image,
             String avatar,
-            String createTime,
+            long createTime,
             int likeCount,
             int replyCount
     ) {
@@ -41,6 +52,7 @@ public class PostModel {
         this.title = title;
         this.author = author;
         this.uid = uid;
+        this.tag = tag;
         this.content = content;
         this.image = image;
         this.avatar = avatar;
@@ -77,7 +89,7 @@ public class PostModel {
         return avatar;
     }
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 
@@ -87,5 +99,21 @@ public class PostModel {
 
     public int getReplyCount() {
         return replyCount;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

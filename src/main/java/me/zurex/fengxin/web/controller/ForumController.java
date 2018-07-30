@@ -2,11 +2,16 @@ package me.zurex.fengxin.web.controller;
 
 import me.zurex.fengxin.domain.forum.CommentModel;
 import me.zurex.fengxin.domain.forum.PostModel;
-import me.zurex.fengxin.domain.user.UserModel;
+import me.zurex.fengxin.domain.user.entity.UserModel;
+import me.zurex.fengxin.service.exception.AuthException;
 import me.zurex.fengxin.service.forum.CommentService;
 import me.zurex.fengxin.service.forum.ExploreTopicService;
 import me.zurex.fengxin.web.base.ApiResponse;
+import me.zurex.fengxin.web.base.BaseStatus;
 import me.zurex.fengxin.web.util.ApiResponseBuilder;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/forum")
 public class ForumController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForumController.class);
     @Autowired
     private ExploreTopicService exploreTopicService;
 
@@ -32,10 +38,31 @@ public class ForumController {
     public ApiResponse addNewPost(
             @RequestParam String title,
             @RequestParam String content,
-            @RequestParam UserModel userModel
+            @RequestParam String tag,
+            @RequestParam String token
     ){
-        PostModel postModel = exploreTopicService.addPost(title, content, userModel);
-        return ApiResponseBuilder.buildSuccessResponse(postModel);
+        try {
+            PostModel postModel = exploreTopicService.addPost(title, tag, content, token);
+            return ApiResponseBuilder.buildSuccessResponse(postModel);
+        } catch (AuthException e){
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            return ApiResponseBuilder.buildErrorResponse(BaseStatus.ERROR, e.getMessage());
+        }
+    }
+
+    @RequestMapping("/addComment")
+    public ApiResponse addComment(
+            @RequestParam String tid,
+            @RequestParam String content,
+            @RequestParam String token
+    ){
+        try {
+            CommentModel commentModel = exploreTopicService.addComment(tid, content, token);
+            return ApiResponseBuilder.buildSuccessResponse(commentModel);
+        } catch (AuthException e){
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            return ApiResponseBuilder.buildErrorResponse(BaseStatus.ERROR, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/topics")

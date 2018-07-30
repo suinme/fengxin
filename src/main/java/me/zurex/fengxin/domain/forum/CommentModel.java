@@ -1,34 +1,49 @@
 package me.zurex.fengxin.domain.forum;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import me.zurex.fengxin.domain.user.entity.UserModel;
 
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author zurex
  * @date 2018/6/19
  * Make life more fun
  */
-@Document(collection = "comment")
+@Table(name = "comment")
+@Entity
 public class CommentModel {
     @Id
-    private String id;
+    @GeneratedValue
+    private long id;
     /**
      * @see PostModel#id
      */
     private String tid;
     private String author;
     /**
-     * @see me.zurex.fengxin.domain.user.UserModel#id
+     * @see UserModel#id
      */
-    private String uid;
+    private long uid;
     private String content;
     private String avatar;
-    private String createTime;
+    private long createTime;
     private int likeCount;
 
-    public String getId() {
+    public CommentModel(String tid, String author, long uid, String content, String avatar) {
+        this.tid = tid;
+        this.author = author;
+        this.uid = uid;
+        this.content = content;
+        this.avatar = avatar;
+        this.createTime = System.currentTimeMillis() / 1000;
+        this.likeCount = 0;
+    }
+
+
+    public long getId() {
         return id;
     }
 
@@ -40,7 +55,7 @@ public class CommentModel {
         return author;
     }
 
-    public String getUid() {
+    public long getUid() {
         return uid;
     }
 
@@ -52,7 +67,7 @@ public class CommentModel {
         return avatar;
     }
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 

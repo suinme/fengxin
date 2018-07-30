@@ -1,12 +1,13 @@
 package me.zurex.fengxin.service.user;
 
 import me.zurex.fengxin.dao.user.UserRepository;
-import me.zurex.fengxin.domain.user.UserModel;
+import me.zurex.fengxin.domain.user.entity.UserModel;
 import me.zurex.fengxin.service.common.CaptchaService;
 import me.zurex.fengxin.service.common.SmsService;
 import me.zurex.fengxin.service.exception.InvalidCaptchaException;
+import me.zurex.fengxin.service.exception.TokenException;
 import me.zurex.fengxin.service.user.dto.LoginResponse;
-import me.zurex.fengxin.service.util.UserTokenBuilder;
+import me.zurex.fengxin.service.util.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class SignUpService {
     SmsService smsService;
 
     @Autowired
-    UserTokenBuilder userTokenBuilder;
+    TokenService tokenService;
 
     @Autowired
     UserRepository userRepository;
@@ -59,7 +60,7 @@ public class SignUpService {
             String phoneNumber,
             String areaCode,
             String captcha
-    ) throws InvalidCaptchaException
+    ) throws InvalidCaptchaException, TokenException
     {
         boolean valid = captchaService.checkCaptcha(
                 buildUid(deviceId, phoneNumber),
@@ -72,7 +73,7 @@ public class SignUpService {
                 userModel = new UserModel(phoneNumber, areaCode);
                 userModel = userRepository.save(userModel);
             }
-            String token = userTokenBuilder.buildToken(userModel.getId(), 0);
+            String token = tokenService.buildToken(userModel, 0);
             return new LoginResponse(userModel.getNickName(), userModel.getId(), token);
         }
         throw new InvalidCaptchaException(captcha+" is invalid");

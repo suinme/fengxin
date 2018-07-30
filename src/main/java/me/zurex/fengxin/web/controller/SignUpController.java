@@ -1,6 +1,7 @@
 package me.zurex.fengxin.web.controller;
 
 import me.zurex.fengxin.service.exception.InvalidCaptchaException;
+import me.zurex.fengxin.service.exception.TokenException;
 import me.zurex.fengxin.service.user.SignUpService;
 import me.zurex.fengxin.web.base.ApiResponse;
 import me.zurex.fengxin.web.base.BaseStatus;
@@ -57,6 +58,8 @@ public class SignUpController {
                     signUpService.quickLogin(deviceId, phoneNumber, areaCode, captcha)
             );
         } catch (InvalidCaptchaException e){
+            return ApiResponseBuilder.buildErrorResponse(BaseStatus.ERROR, e.getMessage());
+        } catch (TokenException e){
             return ApiResponseBuilder.buildErrorResponse(BaseStatus.ERROR, e.getMessage());
         }
     }
